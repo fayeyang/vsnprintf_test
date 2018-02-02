@@ -4,10 +4,27 @@
 #include  <linux/slab.h>
 #include  <linux/vmalloc.h>
 
+#include  <stdarg.h>
+
 MODULE_LICENSE( "GPL" );
 MODULE_AUTHOR( "faye" );
 
-	char *cpBuf;
+char *cpBuf;
+
+static int vaFunc( int i, ... ){
+	int tmp;
+	char *cptr;
+	va_list arg_ptr;
+
+	va_start( arg_ptr, i );
+	for( tmp=0; tmp<i; tmp++ ){
+		cptr = va_arg( arg_ptr, char* );
+		printk( KERN_INFO "%dst arg is: %s\n", tmp, cptr );
+	}
+	va_end( arg_ptr );
+
+	return 0;
+}
 
 static int __init vsnprintf_init( void ){
 
@@ -26,7 +43,9 @@ static int __init vsnprintf_init( void ){
 	ulPa = virt_to_phys( cpBuf );
 	printk( KERN_INFO "kmalloc phyAddr:\t%lX\n", ulPa );
 	
-	tmp = 
+	tmp = vaFunc( 2, "the 1st str", "the 2st str" );
+	
+	tmp = vaFunc( 5, "aaa", "bbb", "ccc", "ddd", "eee", "fff" );
 	
 	return 0;
 }
