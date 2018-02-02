@@ -1,0 +1,1 @@
+cmd_/home/faye/work/work_normal/gcc_test/vsnprintf_test/vsnModule.o := ld -m elf_x86_64   -r -o /home/faye/work/work_normal/gcc_test/vsnprintf_test/vsnModule.o /home/faye/work/work_normal/gcc_test/vsnprintf_test/vsn.o 
