@@ -45,6 +45,28 @@ static int vaFunc_1( int i, ... ){
 	return 0;
 }
 
+static int vaFunc_2( char *str, ... ){
+	char **cptr;
+	va_list arg_ptr;
+
+	cptr = NULL;
+	cptr = kzalloc( sizeof(char) * 1024, GFP_KERNEL );
+	if( !cptr ){
+		printk( KERN_INFO "kmalloc error!\n" );
+		return 1;
+	}
+
+	va_start( arg_ptr, str );
+	vsprintf( (char*)cptr, str, arg_ptr );
+	va_end( arg_ptr );
+
+	printk( KERN_INFO "%s\n", cptr[1] );
+	//printk( KERN_INFO "the 1st va:%s\n", cptr[0] );
+	kfree( cptr );
+
+	return 0;
+}
+
 static int __init vsnprintf_init( void ){
 
 	unsigned long ulPa;
@@ -67,6 +89,8 @@ static int __init vsnprintf_init( void ){
 	tmp = vaFunc_1( 5, "aaa", "bbb", "ccc", "ddd", "eee", "fff", "LISTEND" );
 	
 	tmp = vaFunc_1( 10, "LISTEND" );
+	
+	tmp = vaFunc_2( "the va is:\n%s\0%d\0%s\0%d\0", "the first string", 100, "the second string", 200 );
 	
 	return 0;
 }
