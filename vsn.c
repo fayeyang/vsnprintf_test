@@ -12,6 +12,7 @@ MODULE_AUTHOR( "faye" );
 char *cpBuf;
 
 static int vaFunc( int i, ... ){
+
 	int tmp;
 	char *cptr;
 	va_list arg_ptr;
@@ -20,6 +21,24 @@ static int vaFunc( int i, ... ){
 	for( tmp=0; tmp<i; tmp++ ){
 		cptr = va_arg( arg_ptr, char* );
 		printk( KERN_INFO "%dst arg is: %s\n", tmp, cptr );
+	}
+	va_end( arg_ptr );
+
+	return 0;
+}
+
+static int vaFunc_1( int i, ... ){
+
+	int tmp;
+	char *cptr;
+	va_list arg_ptr;
+
+	tmp = 0;
+	va_start( arg_ptr, i );
+	for( cptr=va_arg(arg_ptr, char*); (strcmp( cptr, "LISTEND" )!=0);  ){
+		tmp++;
+		printk( KERN_INFO "the %dst:%s\n", tmp, cptr );
+		cptr = va_arg( arg_ptr, char* );
 	}
 	va_end( arg_ptr );
 
@@ -43,14 +62,15 @@ static int __init vsnprintf_init( void ){
 	ulPa = virt_to_phys( cpBuf );
 	printk( KERN_INFO "kmalloc phyAddr:\t%lX\n", ulPa );
 	
-	tmp = vaFunc( 2, "the 1st str", "the 2st str" );
+	tmp = vaFunc_1( 2, "the 1st str", "the 2st str", "LISTEND" );
 	
-	tmp = vaFunc( 5, "aaa", "bbb", "ccc", "ddd", "eee", "fff" );
+	tmp = vaFunc_1( 5, "aaa", "bbb", "ccc", "ddd", "eee", "fff", "LISTEND" );
+	
+	tmp = vaFunc_1( 10, "LISTEND" );
 	
 	return 0;
 }
 module_init( vsnprintf_init );
-
 
 static void __exit vsnprintf_exit( void ){
 	printk( KERN_INFO "vsnprintf exit!\n" );
